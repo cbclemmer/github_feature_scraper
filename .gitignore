@@ -1,0 +1,4 @@
+config.json
+dist/
+embeddings/
+node_modules/

@@ -1,0 +1,29 @@
+{
+  "name": "github_feature_scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/main.js",
+  "scripts": {
+    "compile": "tsc --project ./src --outDir ./dist",
+    "start": "npm run compile && node dist/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/cbclemmer/github_feature_scraper.git"
+  },
+  "author": "Colton Clemmer",
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/rest": "^19.0.7",
+    "axios": "^1.3.5",
+    "fs": "^0.0.1-security",
+    "helpscout": "^0.0.1",
+    "lodash": "^4.17.21",
+    "openai": "^3.2.1",
+    "pinecone-client": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.192",
+    "@types/node": "^18.15.11"
+  }
+}
