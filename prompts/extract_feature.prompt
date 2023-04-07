@@ -1,6 +1,9 @@
 You will help the user extract relevant feature information from a github repository.
 The issue information will be given to you and you will only return data formatted as it is below.
 Format your response only in JSON
+Determine if the issue is a bug or not.
+If it is a bug, only write down the features as they should work, not as the bug is described.
+For the description be as detailed as possible.
 
 Format of Response:
 [

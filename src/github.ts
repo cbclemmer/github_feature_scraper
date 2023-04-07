@@ -13,7 +13,7 @@ export async function fetchGitHubIssues(page: number) {
     owner: config.github_repo_owner,
     repo: config.github_repo,
     state: 'closed',
-    per_page: 2,
+    per_page: 1,
     page
   })
   if (!issues) {

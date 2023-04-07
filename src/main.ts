@@ -1,3 +1,4 @@
+import { flatten } from 'lodash'
 import { fetchGitHubIssues } from './github'
 import { extractFeatureInfo } from './gpt'
 // import { createOrUpdateArticle } from './helpscout'
@@ -8,9 +9,15 @@ import { extractFeatureInfo } from './gpt'
   console.log('Fetching issues')
   const issues = await fetchGitHubIssues(1)
   console.log('Fetched issues')
-  const featuresInfo = await Promise.all(
-    issues.map(issue => extractFeatureInfo(issue.text))
-  )
+  console.log(issues.length)
+
+  let features = []
+  for (let i = 0; i < issues.length; i++) {
+    const issue =issues[i]
+    features.push(extractFeatureInfo(issue.text))
+  }
+  features = flatten(features)
+  
   console.log('Extracted Features')
 
   console.log('DATA:')
