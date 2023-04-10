@@ -1,4 +1,5 @@
 import { flatten } from 'lodash'
+import { fetchArticles } from './helpscout'
 import { fetchGitHubIssues } from './github'
 import { extractFeatureInfo } from './gpt'
 // import { createOrUpdateArticle } from './helpscout'
@@ -12,9 +13,12 @@ import { extractFeatureInfo } from './gpt'
   console.log(issues.length)
 
   let features = []
+  const articles = await fetchArticles(1)
+  console.log(articles)
+  return
   for (let i = 0; i < issues.length; i++) {
-    const issue =issues[i]
-    features.push(extractFeatureInfo(issue.text))
+    const issue = issues[i]
+    features.push(extractFeatureInfo(issue.text, issue.id))
   }
   features = flatten(features)
   
@@ -23,7 +27,6 @@ import { extractFeatureInfo } from './gpt'
   console.log('DATA:')
   // console.log(featuresInfo)
 
-  // const articles = await helpscout.articles.list({ categoryId: helpScoutCategoryId });
 
   // const articlesText = articles.map(article => article.text);
   // const embeddingModel = await trainEmbeddings(articlesText);

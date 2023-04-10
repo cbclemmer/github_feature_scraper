@@ -7,7 +7,7 @@ export type BotResponse = {
   description: string
 }
 
-export async function extractFeatureInfo(issueText: string): Promise<string> {
+export async function extractFeatureInfo(issueText: string, issueNum: number): Promise<string> {
   console.log(issueText)
   const system_prompt = fs.readFileSync('prompts/extract_feature.prompt').toString()
 
@@ -31,5 +31,7 @@ export async function extractFeatureInfo(issueText: string): Promise<string> {
   if (!bot_response) {
     throw "Chat completion error"
   }
-  return JSON.parse(bot_response)
+  const data = JSON.parse(bot_response)
+  data.issue = issueNum
+  return data
 }
