@@ -14,8 +14,6 @@ import { extractFeatureInfo } from './gpt'
 
   let features = []
   const articles = await fetchArticles(1)
-  console.log(articles)
-  return
   for (let i = 0; i < issues.length; i++) {
     const issue = issues[i]
     features.push(extractFeatureInfo(issue.text, issue.id))
