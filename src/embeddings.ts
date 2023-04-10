@@ -1,6 +1,8 @@
 import { openai, pinecone } from './api'
 
-export async function getEmbedding(s: string): Promise<number[]> {
+export type Embedding = number[]
+
+export async function getEmbedding(s: string): Promise<Embedding> {
   const embed_res = await openai.createEmbedding({
     input: s,
     model: 'text-embedding-ada-002'
@@ -8,12 +10,11 @@ export async function getEmbedding(s: string): Promise<number[]> {
   return embed_res.data.data[0].embedding
 }
 
-export async function createEmbedding(s: string): Promise<string> {
-  const vec = await getEmbedding(s)
+export async function createEmbedding(vec: Embedding, metadata: any): Promise<string> {
   await pinecone.upsert({
     vectors: [ { 
       values: vec,
-      metadata: s
+      metadata
     } ]
   })
 
@@ -24,11 +25,10 @@ export async function createEmbedding(s: string): Promise<string> {
   return matches[0].id;
 }
 
-export async function queryEmbeddings(text: string, threshold: number): Promise<string | null> {
-  const query_vec = await getEmbedding(text)
+export async function queryEmbeddings(vec: Embedding, threshold: number): Promise<string | null> {
   const { matches } = await pinecone.query({
     topK: 1,
-    vector: query_vec
+    vector: vec
   })
 
   if (matches[0].score < threshold) {

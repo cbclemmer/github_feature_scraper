@@ -82,3 +82,53 @@ export function fetchArticles(categoryId: number, options: FetchOptions = { }): 
         req.end()
     })
 }
+
+interface Article {
+    name: string
+    text: string
+}
+
+function parseIdFromLocationString(locationString: string) {
+    const parts = locationString.split('/');
+    return parts[parts.length - 1];
+}
+
+export async function createArticle(params: Article): Promise<string> {
+    return new Promise<string>((res: any, rej: any) => {
+        const path = `/v1/articles`
+        const requestOptions = {
+            hostname: 'docsapi.helpscout.net',
+            path: path,
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${Buffer.from(`${config.helpscout_key}:X`).toString('base64')}`,
+            },
+            body: {
+                name: params.name,
+                text: params.text,
+                status: 'unpublished',
+                collectionId: 1
+            }
+        }
+    
+        const req = https.request(requestOptions, (http_res: any) => {
+            let data = ''
+    
+            http_res.on('data', (chunk: string) => {
+                console.log(chunk.toString())
+                data += chunk
+            })
+    
+            http_res.on('end', () => {
+                res(parseIdFromLocationString(JSON.parse(data).location))
+            })
+        })
+    
+        req.on('error', (error: string) => {
+            rej(error)
+        })
+    
+        req.end()
+    })
+}

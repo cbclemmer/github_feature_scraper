@@ -1,14 +1,15 @@
 import { openai } from './api'
 import * as fs from 'fs'
+import { Issue } from './github'
 
 export type BotResponse = {
+  issue: number,
   page: string,
   feature: string,
-  description: string
+  description: string,
 }
 
-export async function extractFeatureInfo(issueText: string, issueNum: number): Promise<string> {
-  console.log(issueText)
+export async function extractFeatureInfo(issue: Issue): Promise<BotResponse> {
   const system_prompt = fs.readFileSync('prompts/extract_feature.prompt').toString()
 
   const res = await openai.createChatCompletion({
@@ -21,7 +22,7 @@ export async function extractFeatureInfo(issueText: string, issueNum: number): P
         },
         {
             "role": "user",
-            "content": issueText
+            "content": issue.text
         }
     ]
   })
@@ -32,6 +33,6 @@ export async function extractFeatureInfo(issueText: string, issueNum: number): P
     throw "Chat completion error"
   }
   const data = JSON.parse(bot_response)
-  data.issue = issueNum
-  return data
+  data.issue = issue.id
+  return data as BotResponse
 }

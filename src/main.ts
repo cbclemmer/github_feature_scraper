@@ -1,24 +1,35 @@
 import { flatten } from 'lodash'
 import { fetchArticles } from './helpscout'
-import { fetchGitHubIssues } from './github'
+import { getIssuesToParse } from './github'
 import { extractFeatureInfo } from './gpt'
-// import { createOrUpdateArticle } from './helpscout'
+import { groupBy } from 'lodash'
+import { getEmbedding } from './embeddings'
+import { queryEmbeddings } from './embeddings'
 
 (async () => {
   const similarityThreshold = 0.75
 
   console.log('Fetching issues')
-  const issues = await fetchGitHubIssues(1)
+  const issues = await getIssuesToParse()
   console.log('Fetched issues')
   console.log(issues.length)
 
   let features = []
-  const articles = await fetchArticles(1)
   for (let i = 0; i < issues.length; i++) {
     const issue = issues[i]
-    features.push(extractFeatureInfo(issue.text, issue.id))
+    features.push(await extractFeatureInfo(issue))
   }
-  features = flatten(features)
+  const articles = await fetchArticles(1)
+  const groupedFeatures = groupBy(flatten(features), (f) => f.page)
+  for (let i = 0; i < Object.keys(groupedFeatures).length; i++) {
+    const groupName = Object.keys(groupedFeatures)[i]
+    const group = groupedFeatures[groupName]
+    const groupEmbedding = await getEmbedding(groupName)
+    const closestPage = await queryEmbeddings(groupEmbedding, similarityThreshold)
+    if (closestPage == null) {
+      
+    }
+  }
   
   console.log('Extracted Features')
 
